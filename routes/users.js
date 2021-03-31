@@ -4,28 +4,31 @@ const express = require('express');
 const mongoose = require('mongoose')
 const router = express.Router();
 const Users = require('../models/Users');
-const bscript = require('bcryptjs')
+const bcript = require('bcryptjs')
 
 router.get('/', async (req, res) => {
-  res.send('users')
+  res.send('all User')
 })
 
-router.post('/', async (req, res) => {
-  const salt = bscript.genSaltSync(10);
+const middleware = (req, res, next) => {
+  const token = req.headers['access-token'];
+  console.log(token);
+  next()
+}
 
-  const users = new Users({
-    _id: new mongoose.Types.ObjectId,
-    username: req.body.username,
-    password: bscript.hashSync(req.body.password, salt),
-    email: req.body.email
-  })
-  const allUser = await Users.find();
-  const foundUser = allUser.find(user => user.username === req.body.username)
-  if (foundUser) {
+router.post('/', middleware, async (req, res) => {
+  const userFound = await Users.findOne({ username: req.body.username });
+  if (userFound) {
     return res.status(200).send({
       message: Message.TAI_KHOAN_TON_TAI
     })
   } else {
+    const users = new Users({
+      _id: new mongoose.Types.ObjectId,
+      username: req.body.username,
+      password: await bcript.hash(req.body.password, 10),
+      email: req.body.email
+    })
     return users
       .save()
       .then(result => {
