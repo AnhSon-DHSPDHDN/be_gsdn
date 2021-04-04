@@ -8,7 +8,16 @@ const feedbackRouter = require('./routes/feedback')
 const newRouter = require('./routes/new')
 const loginRouter = require('./routes/login')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app = express();
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
+app.use(express.static('images'))
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
