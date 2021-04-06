@@ -1,12 +1,12 @@
 const express = require('express');
 const { middlewareAuthorUser } = require('../auth/authorization');
 const { Message } = require('../configs/message');
-const Teacher = require('../models/Teacher');
+const Customer = require('../models/Customer');
 const router = express.Router();
 
 router.get('/', middlewareAuthorUser, async (req, res) => {
   try {
-    const allTeacher = await Teacher.find()
+    const allTeacher = await Customer.find({ isTeacher: true })
     return res.status(200).send({
       message: Message.THANH_CONG,
       data: allTeacher
