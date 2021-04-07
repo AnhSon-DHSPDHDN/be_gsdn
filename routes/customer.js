@@ -5,14 +5,56 @@ const router = express.Router();
 const Customer = require('../models/Customer');
 const Users = require('../models/Users');
 const multer = require('multer')
+const fs = require('fs')
+const FileType = require('file-type')
 
-const upload = multer({
-  dest: './images/avatar'
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './images/avatar')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + '.jpg')
+  }
 })
 
-router.post('/upload', upload.single('avatar'), async (req, res) => {
-  console.log(req.file);
-  res.send('hihi')
+const upload = multer({
+  storage: storage,
+  limits: {
+    fieldSize: 1000000
+  }
+})
+
+router.post('/upload', middlewareAuthorUser, upload.single('avatar'), async (req, res) => {
+  try {
+    const filepath = FileType.fromFile(req.file.path)
+    if (!filepath) {
+      fs.unlink(`${filepath}`, err => {
+        if (err) throw new Error(err)
+      })
+      throw new Error()
+    }
+    if ((await filepath).ext !== 'jpg' || (await filepath).mime !== 'image/jpeg') {
+      fs.unlink(`${filepath}`, err => {
+        if (err) throw new Error(err)
+      })
+      throw new Error()
+    }
+    const _id = req.user._idCustomer
+    await Customer.findByIdAndUpdate(_id, { avatar: `${process.env.BASE_BE}avatar/${req.file.filename}` })
+    const customer = await Customer.findById(_id)
+    if (customer) {
+      res.status(200).send({
+        customer: customer
+      })
+    } else {
+      throw new Error()
+    }
+  } catch (error) {
+    res.status(400).send({
+      message: Message.LOI_SERVER,
+      error: error
+    })
+  }
 })
 
 router.post('/', middlewareAuthorUser, async (req, res) => {

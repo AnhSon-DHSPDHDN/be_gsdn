@@ -7,7 +7,8 @@ const CustomerSchema = mongoose.Schema({
     default: uuid()
   },
   avatar: {
-    type: String
+    type: String,
+    default: 'http://localhost:4000/avatar/non_avatar.png'
   },
   description: {
     type: String
@@ -36,8 +37,14 @@ const CustomerSchema = mongoose.Schema({
   subject: {
     type: Array
   },
+  isTeacher: {
+    type: Boolean
+  },
   sex: {
     type: Boolean
+  },
+  salary: {
+    type: Number
   },
   createBy: {
     type: String,

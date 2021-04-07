@@ -7,6 +7,7 @@ export const middlewareAuthorAdmin = async (req, res, next) => {
     const token = req.headers['access-token'];
     const payload = await jwt.verify(token, process.env.SECRET_KEY);
     const user = await Users.findById(payload.userID)
+    req.user = user
     if (user._idRole === "admin") {
       return next();
     }
@@ -23,6 +24,7 @@ export const middlewareAuthorUser = async (req, res, next) => {
     const token = req.headers['access-token'];
     const payload = await jwt.verify(token, process.env.SECRET_KEY);
     const user = await Users.findById(payload.userID)
+    req.user = user
     if (user._idRole === "admin" || user._idRole === "user") {
       return next();
     }
