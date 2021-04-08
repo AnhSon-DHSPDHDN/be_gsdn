@@ -7,6 +7,7 @@ const customerRouter = require('./routes/customer')
 const feedbackRouter = require('./routes/feedback')
 const newRouter = require('./routes/new')
 const loginRouter = require('./routes/login')
+const developerRouter = require('./routes/developer')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/customers', customerRouter);
 app.use('/api/feedbacks', feedbackRouter);
 app.use('/api/news', newRouter);
 app.use('/api/login', loginRouter)
+app.use('/api/developer', developerRouter)
 
 app.get('/api/', (req, res) => {
   res.send('hihi')

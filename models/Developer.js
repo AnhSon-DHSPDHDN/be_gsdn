@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 const { uuid } = require('uuidv4');
 
-const NewSchema = mongoose.Schema({
+const DeveloperSchema = mongoose.Schema({
   _id: {
     type: String,
     default: uuid()
   },
-  title: {
+  avatar: {
     type: String,
+    default: 'http://localhost:4000/avatar/non_avatar.png',
     require
   },
-  image: {
+  fullName: {
     type: String,
     require
   },
@@ -18,13 +19,9 @@ const NewSchema = mongoose.Schema({
     type: String,
     require
   },
-  link: {
-    type: String,
-    require
-  },
   createBy: {
     type: String,
-    default: 'admin'
+    default: null
   },
   createdAt: {
     type: Number,
@@ -32,4 +29,4 @@ const NewSchema = mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('New', NewSchema)
+module.exports = mongoose.model('Developer', DeveloperSchema)
