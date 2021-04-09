@@ -89,7 +89,9 @@ router.post('/', middlewareAuthorUser, async (req, res) => {
 
 router.get('/', middlewareAuthorUser, async (req, res) => {
   try {
-    const allCustomer = await Customer.find()
+    const allCustomer = await Customer.find({
+      fullName: new RegExp(req.query.fullName, 'i')
+    })
     return res.status(200).send({
       message: Message.THANH_CONG,
       data: allCustomer

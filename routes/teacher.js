@@ -6,7 +6,10 @@ const router = express.Router();
 
 router.get('/', middlewareAuthorUser, async (req, res) => {
   try {
-    const allTeacher = await Customer.find({ isTeacher: true })
+    const allTeacher = await Customer.find({
+      isTeacher: true,
+      fullName: new RegExp(req.query.fullName, 'i')
+    })
     return res.status(200).send({
       message: Message.THANH_CONG,
       data: allTeacher
