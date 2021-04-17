@@ -5,9 +5,23 @@ const New = require('../models/New');
 const router = express.Router();
 
 router.delete('/:id', middlewareAuthorAdmin, async (req, res) => {
-  const { id } = req.params
-  console.log(id);
-  res.send('hihi')
+  try {
+    const { id } = req.params
+    console.log(id);
+    await New.findByIdAndDelete(id, (err, res) => {
+      if (err) {
+        throw new Error(err)
+      }
+    })
+    res.status(200).send({
+      message: Message.THANH_CONG
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: Message.LOI_SERVER,
+      error: error
+    })
+  }
 })
 
 router.get('/', middlewareAuthorUser, async (req, res) => {
