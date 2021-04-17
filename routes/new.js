@@ -5,7 +5,7 @@ const { Message } = require('../configs/message');
 const New = require('../models/New');
 const router = express.Router();
 
-router.post('/news', middlewareAuthorAdmin, async (req, res) => {
+router.post('/', middlewareAuthorAdmin, async (req, res) => {
   try {
     const newDocument = req.body;
     const newReponse = new New({
