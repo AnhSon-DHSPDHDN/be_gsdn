@@ -1,8 +1,14 @@
 const express = require('express');
-const { middlewareAuthorUser } = require('../auth/authorization');
+const { middlewareAuthorUser, middlewareAuthorAdmin } = require('../auth/authorization');
 const { Message } = require('../configs/message');
 const New = require('../models/New');
 const router = express.Router();
+
+router.delete('/:id', middlewareAuthorAdmin, async (req, res) => {
+  const { id } = req.params
+  console.log(id);
+  res.send('hihi')
+})
 
 router.get('/', middlewareAuthorUser, async (req, res) => {
   try {
