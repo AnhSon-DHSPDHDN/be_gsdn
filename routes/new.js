@@ -4,15 +4,27 @@ const { Message } = require('../configs/message');
 const New = require('../models/New');
 const router = express.Router();
 
+router.put('/:id', middlewareAuthorAdmin, async (req, res) => {
+  try {
+    const newUpdate = { ...req.body };
+    const { id } = req.params
+    await New.findByIdAndUpdate(id, { ...newUpdate })
+    res.status(200).send({
+      message: Message.THANH_CONG
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: Message.LOI_SERVER,
+      error: error
+    })
+  }
+})
+
 router.delete('/:id', middlewareAuthorAdmin, async (req, res) => {
   try {
     const { id } = req.params
     console.log(id);
-    await New.findByIdAndDelete(id, (err, res) => {
-      if (err) {
-        throw new Error(err)
-      }
-    })
+    await New.findByIdAndDelete(id)
     res.status(200).send({
       message: Message.THANH_CONG
     })
