@@ -20,11 +20,11 @@ router.put('/:id', middlewareAuthorAdmin, async (req, res) => {
   }
 })
 
-router.delete('/:id', middlewareAuthorAdmin, async (req, res) => {
+router.delete('/', middlewareAuthorAdmin, async (req, res) => {
   try {
-    const { id } = req.params
-    console.log(id);
-    await New.findByIdAndDelete(id)
+    const { ids } = req.body
+    console.log(ids);
+    await New.deleteMany({ _id: { $in: ids } })
     res.status(200).send({
       message: Message.THANH_CONG
     })
