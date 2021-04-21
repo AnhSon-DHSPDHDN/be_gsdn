@@ -1,12 +1,13 @@
 const express = require('express');
-const { middlewareAuthorUser } = require('../auth/authorization');
+const { middlewareAuthorUser, middlewareAuthorAdmin } = require('../auth/authorization');
 const { Message } = require('../configs/message');
 const router = express.Router();
 const Customer = require('../models/Customer');
 const Users = require('../models/Users');
 const multer = require('multer')
 const fs = require('fs')
-const FileType = require('file-type')
+const FileType = require('file-type');
+const { uuid } = require('uuidv4');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -21,6 +22,45 @@ const upload = multer({
   storage: storage,
   limits: {
     fieldSize: 1000000
+  }
+})
+
+router.delete('/', middlewareAuthorAdmin, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (ids) {
+      await Customer.deleteMany({ _id: { $in: ids } })
+      await Users.updateMany({ _idCustomer: { $in: ids } }, {
+        $set: {
+          _idCustomer: null
+        }
+      })
+      res.status(200).send({
+        message: Message.THANH_CONG
+      })
+    } else throw new Error()
+  } catch (error) {
+    res.status(400).send({
+      message: Message.LOI_SERVER,
+      error: error
+    })
+  }
+})
+
+router.put('/:id', middlewareAuthorAdmin, async (req, res) => {
+  try {
+    const { id } = req.params
+    if (id) {
+      await Customer.findByIdAndUpdate(id, { ...req.body })
+      res.status(200).send({
+        message: Message.THANH_CONG
+      })
+    } else throw new Error()
+  } catch (error) {
+    res.status(400).send({
+      message: Message.LOI_SERVER,
+      error: error
+    })
   }
 })
 
@@ -68,7 +108,10 @@ router.post('/', middlewareAuthorUser, async (req, res) => {
         })
       }
     } else {
-      const customer = new Customer({ ...req.body.customer })
+      const customer = new Customer({
+        _id: uuid(),
+        ...req.body.customer
+      })
       customer.save()
         .then(async result => {
           res.status(200).send({
